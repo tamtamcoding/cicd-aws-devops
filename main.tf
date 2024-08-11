@@ -11,22 +11,6 @@ provider "aws" {
   region = var.aws_region
 }
 
-# Define DynamoDB Table for Locking
-resource "aws_dynamodb_table" "terraform_lock" {
-  name         = "terraform-lock"
-  billing_mode = "PAY_PER_REQUEST"
-
-  attribute {
-    name = "LockID"
-    type = "S"
-  }
-
-  hash_key = "LockID"
-
-  tags = {
-    Name = "terraform-lock"
-  }
-}
 
 data "aws_ami" "amazon_linux" {
   most_recent = true
