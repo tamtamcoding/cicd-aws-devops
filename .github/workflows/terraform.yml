@@ -22,14 +22,18 @@ jobs:
         export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
         export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
         export AWS_DEFAULT_REGION=${{ secrets.AWS_REGION }}
-        
-    # - name: Install AWS CLI
-    #   run: |
-    #     sudo apt-get update
-    #     sudo apt-get install -y awscli
 
-    # - name: Configure AWS CLI
-    #   run: aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID && aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY && aws configure set default.region $AWS_REGION
+    - name: Check if S3 bucket exists and create if not
+      id: check_s3_bucket
+      run: |
+        if ! aws s3api head-bucket --bucket "tamtamcoding110824" 2>/dev/null; then
+          echo "S3 bucket does not exist. Creating bucket..."
+          aws s3api create-bucket --bucket "tamtamcoding110824" --region us-east-1
+          echo "Bucket created. Waiting for 60 seconds to ensure consistency..."
+          sleep 60
+        else
+          echo "S3 bucket exists."
+        fi
 
     - name: Set up Terraform
       uses: hashicorp/setup-terraform@v1
@@ -38,14 +42,10 @@ jobs:
 
     - name: Initialize Terraform
       run: terraform init
-      # env:
-      #   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
     - name: Plan Terraform changes
       run: terraform plan -out=tfplan
 
-    # Add a prompt to ask the user whether to apply or destroy changes
     - name: Apply Terraform changes
       run: terraform apply --auto-approve
 
