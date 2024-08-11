@@ -41,7 +41,7 @@ jobs:
         echo "Describe table output: $table_exists"
         
         if [[ $? -ne 0 ]]; then
-          echo "DynamoDB table does not exist. Creating table..."
+          echo "DynamoDB table does not exist or an error occurred. Creating table..."
           create_table_response=$(aws dynamodb create-table \
             --table-name "terraform-lock" \
             --attribute-definitions AttributeName=LockID,AttributeType=S \
