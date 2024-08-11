@@ -7,7 +7,7 @@ on:
 
 jobs:
   terraform:
-    runs-on: ubuntu-latestaws
+    runs-on: ubuntu-latest
     environment: aws
     
     steps:
