@@ -14,7 +14,7 @@ provider "aws" {
 # Define DynamoDB Table for Locking
 resource "aws_dynamodb_table" "terraform_lock" {
   name         = "terraform-lock"
-  billing_mode = "PAY_PER_REQUEST"
+  billing_mode = "PROVISIONED"
 
   attribute {
     name = "LockID"
