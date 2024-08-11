@@ -3,11 +3,29 @@ terraform {
     bucket         = "tamtamcoding110824"
     key            = "terraform.tfstate"
     region         = "us-east-1"
+    dynamodb_table = "terraform-lock"  # DynamoDB table for state locking
   }
 }
 
 provider "aws" {
   region = var.aws_region
+}
+
+# Define DynamoDB Table for Locking
+resource "aws_dynamodb_table" "terraform_lock" {
+  name         = "terraform-lock"
+  billing_mode = "PAY_PER_REQUEST"
+
+  attribute {
+    name = "LockID"
+    type = "S"
+  }
+
+  hash_key = "LockID"
+
+  tags = {
+    Name = "terraform-lock"
+  }
 }
 
 data "aws_ami" "amazon_linux" {

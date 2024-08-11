@@ -35,6 +35,23 @@ jobs:
           echo "S3 bucket exists."
         fi
 
+    - name: Check if DynamoDB table exists and create if not
+      id: check_dynamodb_table
+      run: |
+        table_exists=$(aws dynamodb describe-table --table-name "terraform-lock" 2>/dev/null)
+        if [ $? -ne 0 ]; then
+          echo "DynamoDB table does not exist. Creating table..."
+          aws dynamodb create-table --table-name "terraform-lock" \
+            --attribute-definitions AttributeName=LockID,AttributeType=S \
+            --key-schema AttributeName=LockID,KeyType=HASH \
+            --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
+            --region us-east-1
+          echo "Table created. Waiting for 60 seconds to ensure consistency..."
+          sleep 60
+        else
+          echo "DynamoDB table exists."
+        fi
+
     - name: Set up Terraform
       uses: hashicorp/setup-terraform@v2
       with:
