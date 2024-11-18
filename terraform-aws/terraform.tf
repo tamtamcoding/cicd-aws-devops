@@ -1,13 +1,13 @@
 terraform {
   required_providers {
     aws = {
-      region = "us-east-1"
       source = "hashicorp/aws"
     }
   }
 }
 
 provider "aws" {
+  region = "us-east-1"
   default_tags {
     tags = {
       "Environment" = "Test"
